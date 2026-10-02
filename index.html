@@ -186,6 +186,29 @@
   .tabbtn { padding:9px 18px; border-radius:9px; font-size:13.5px; font-weight:700; border:1px solid var(--line); color: var(--muted); background: var(--card); cursor:pointer; }
   .tabbtn.active { background: var(--primary); color:#fff; border-color: var(--primary); }
 
+  /* ---------- Notifications ---------- */
+  .notification-wrap { position:fixed; top:22px; right:30px; z-index:80; }
+  .notification-btn { width:42px; height:42px; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 14px rgba(20,30,60,0.08); position:relative; }
+  .notification-btn:hover { background:var(--bg); }
+  .notification-badge { position:absolute; top:-5px; right:-5px; min-width:18px; height:18px; padding:0 5px; border-radius:10px; background:#E11D48; color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
+  .notification-panel { display:none; position:absolute; top:50px; right:0; width:340px; background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:0 14px 35px rgba(20,30,60,0.14); overflow:hidden; }
+  .notification-panel.show { display:block; }
+  .notification-head { padding:15px 17px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
+  .notification-head h3 { margin:0; font-size:14px; font-weight:800; }
+  .notification-head button { border:none; background:none; color:var(--primary); font-size:11.5px; font-weight:700; cursor:pointer; }
+  .notification-item { padding:14px 17px; border-bottom:1px solid var(--line); cursor:pointer; }
+  .notification-item:hover { background:var(--bg); }
+  .notification-item:last-child { border-bottom:none; }
+  .notification-icon { width:34px; height:34px; border-radius:10px; background:var(--success-bg); color:var(--success-text); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .notification-row { display:flex; gap:11px; align-items:flex-start; }
+  .notification-title { font-size:12.5px; font-weight:800; margin-bottom:3px; }
+  .notification-text { font-size:11.5px; color:var(--muted); line-height:1.45; }
+  .notification-time { font-size:10.5px; color:#9AA3B2; margin-top:5px; }
+  .notification-empty { padding:28px 18px; text-align:center; color:var(--muted); font-size:12.5px; }
+  .tabbtn-wrap { position:relative; display:inline-flex; }
+  .tab-badge { position:absolute; top:-7px; right:-7px; min-width:18px; height:18px; padding:0 5px; border-radius:10px; background:#E11D48; color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
+  @media (max-width:760px) { .notification-wrap { right:16px; top:14px; } .notification-panel { width:300px; right:-4px; } }
+
   /* ---------- Modal ---------- */
   .modal-backdrop { display:none; position: fixed; inset:0; background: rgba(15,20,40,0.5); z-index: 90; align-items:flex-start; justify-content:center; padding: 60px 20px; overflow-y:auto; }
   .modal-backdrop.show { display:flex; }
@@ -225,6 +248,15 @@
   .detail-section h4 { font-size:13px; margin:0 0 8px; font-weight:800; }
   .detail-desc { font-size:13.5px; color: var(--muted); line-height:1.6; }
   .people-list { display:flex; flex-direction:column; gap:10px; }
+  .person-name-wrap { position:relative; display:inline-flex; align-items:center; cursor:pointer; }
+  .contact-card { display:none; position:absolute; left:0; bottom:calc(100% + 10px); width:250px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px 14px; box-shadow:0 12px 30px rgba(20,30,60,0.16); z-index:30; }
+  .person-name-wrap:hover .contact-card { display:block; }
+  .contact-card::after { content:""; position:absolute; left:18px; bottom:-6px; width:10px; height:10px; background:var(--card); border-right:1px solid var(--line); border-bottom:1px solid var(--line); transform:rotate(45deg); }
+  .contact-card-top { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+  .contact-card-avatar { width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0; }
+  .contact-card-name { font-size:13px; font-weight:800; color:var(--ink); }
+  .contact-card-role { font-size:11px; color:var(--muted); margin-top:2px; }
+  .contact-card-line { font-size:11.5px; color:var(--muted); line-height:1.5; margin-top:4px; }
   .person-row { display:flex; align-items:center; gap:10px; font-size:13px; }
   .person-row .avatar { position:static; margin:0; width:28px; height:28px; font-size:11px; }
   .detail-cta button { width:100%; padding:13px; border-radius:11px; border:none; font-size:14.5px; font-weight:700; cursor:pointer; }
@@ -347,6 +379,17 @@
       </div>
 
       <div class="main-area">
+        <div class="notification-wrap" id="notification-wrap">
+          <button class="notification-btn" onclick="toggleNotifications(event)" aria-label="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+            <span class="notification-badge" id="notification-badge" style="display:none"></span>
+          </button>
+          <div class="notification-panel" id="notification-panel">
+            <div class="notification-head"><h3>Notifications</h3><button onclick="markNotificationsRead(event)">Mark all read</button></div>
+            <div id="notification-list"></div>
+          </div>
+        </div>
+
         <!-- FEED / DASHBOARD PAGE -->
         <div class="page active" id="page-feed">
           <h1 class="welcome-h">Welcome back, <span class="accent">You</span>! &#128075;</h1>
@@ -418,7 +461,10 @@
           <p class="welcome-sub">Everything you're hosting or have joined</p>
           <div class="tabrow">
             <button class="tabbtn active" id="tab-hosted" onclick="setMyTab('hosted')">Hosted by me</button>
-            <button class="tabbtn" id="tab-joined" onclick="setMyTab('joined')">Joined</button>
+            <span class="tabbtn-wrap">
+              <button class="tabbtn" id="tab-joined" onclick="setMyTab('joined')">Joined</button>
+              <span class="tab-badge" id="joined-badge" style="display:none"></span>
+            </span>
           </div>
           <div class="card-grid" id="myplans-list"></div>
         </div>
@@ -503,12 +549,35 @@
 
   let plans = [
     { id: 1, title: 'Sunrise trek at Yercaud', category: 'outdoors', day: 'Sat', time: '5:30 AM', location: 'Yercaud Hills', description: "Early start, back by noon. Carpooling from office parking lot \u2014 2 seats free.", host: 'Priya S.', visibility: 'company', interested: ['Arjun K.', 'Meena R.'], pending: ['Divya M.'] },
-    { id: 2, title: '5-a-side football', category: 'sports', day: 'Sun', time: '6:00 PM', location: 'Turf Town', description: "Need 3 more players. All skill levels welcome, we're just here to run around.", host: 'Karthik V.', visibility: 'company', interested: ['Divya M.', 'Rahul T.', 'Sanjay P.'], pending: [] },
+    { id: 2, title: '5-a-side football', category: 'sports', day: 'Sun', time: '6:00 PM', location: 'Turf Town', description: "Need 3 more players. All skill levels welcome, we're just here to run around.", host: 'Karthik V.', visibility: 'company', interested: ['Divya M.', 'Rahul T.', 'Sanjay P.', 'You'], pending: [] },
     { id: 3, title: 'Sunday brunch crawl', category: 'food', day: 'Sun', time: '11:00 AM', location: 'Cantonment area', description: 'Trying 3 new cafes back to back. Come hungry, leave full.', host: 'Meena R.', visibility: 'team', interested: ['Priya S.'], pending: [] },
     { id: 4, title: 'Board game afternoon', category: 'games', day: 'Sat', time: '3:00 PM', location: 'My place, Srirangam', description: 'Bringing Catan and Codenames. Snacks provided, just bring yourself.', host: 'Arjun K.', visibility: 'company', interested: [], pending: [] },
   ];
 
   let currentUser = 'You';
+  let notifications = [
+    { id: 1001, title:'Join Request Accepted', text:'Karthik V. accepted your request to join “5-a-side football”.', planId:2, read:false, time:'Today' }
+  ];
+
+  const CONTACTS = {
+    'Priya S.':   { role:'Software Engineer', department:'Integration', email:'priya.s@quadrantitservices.com', phone:'+91 98765 43210' },
+    'Arjun K.':   { role:'Software Engineer', department:'Technology', email:'arjun.k@quadrantitservices.com', phone:'+91 98765 43211' },
+    'Meena R.':   { role:'Business Analyst', department:'Operations', email:'meena.r@quadrantitservices.com', phone:'+91 98765 43212' },
+    'Divya M.':   { role:'Software Engineer', department:'Technology', email:'divya.m@quadrantitservices.com', phone:'+91 98765 43213' },
+    'Rahul T.':   { role:'QA Engineer', department:'Quality', email:'rahul.t@quadrantitservices.com', phone:'+91 98765 43214' },
+    'Sanjay P.':  { role:'Software Engineer', department:'Integration', email:'sanjay.p@quadrantitservices.com', phone:'+91 98765 43215' },
+    'Karthik V.': { role:'Software Engineer', department:'Technology', email:'karthik.v@quadrantitservices.com', phone:'+91 98765 43216' }
+  };
+
+  function contactHtml(name) {
+    const c = CONTACTS[name] || { role:'Employee', department:'Quadrant IT Services', email:name.toLowerCase().replace(/[^a-z0-9]+/g,'.').replace(/\.$/,'') + '@quadrantitservices.com' };
+    return `<span class="person-name-wrap">${name}<span class="contact-card">
+      <span class="contact-card-top"><span class="contact-card-avatar">${initials(name)}</span><span><span class="contact-card-name">${name}</span><span class="contact-card-role">${c.role}</span></span></span>
+      <span class="contact-card-line"><b>Department:</b> ${c.department}</span>
+      <span class="contact-card-line"><b>Email:</b> ${c.email}</span>
+      <span class="contact-card-line"><b>Phone:</b> ${c.phone || 'Not available'}</span>
+    </span></span>`;
+  }
   let dayFilter = 'All';
   let catFilter = 'All';
   let myTab = 'hosted';
@@ -536,6 +605,58 @@
     document.getElementById('browse-anchor').scrollIntoView({ behavior: 'smooth' });
   }
 
+  function addNotification(title, text, planId) {
+    notifications.unshift({ id: Date.now() + Math.random(), title, text, planId, read:false, time:'Just now' });
+    renderNotifications();
+  }
+
+  function toggleNotifications(event) {
+    event.stopPropagation();
+    const panel = document.getElementById('notification-panel');
+    panel.classList.toggle('show');
+    renderNotifications();
+  }
+
+  function markNotificationsRead(event) {
+    event.stopPropagation();
+    notifications.forEach(n => n.read = true);
+    renderNotifications();
+  }
+
+  function renderNotifications() {
+    const list = document.getElementById('notification-list');
+    const badge = document.getElementById('notification-badge');
+    const joinedBadge = document.getElementById('joined-badge');
+    if (!list) return;
+    const unread = notifications.filter(n => !n.read).length;
+    badge.style.display = unread ? 'flex' : 'none';
+    if (unread) badge.textContent = unread > 9 ? '9+' : unread;
+    const joinedUnread = notifications.filter(n => !n.read && n.planId && plans.some(p => p.id === n.planId && p.interested.includes(currentUser))).length;
+    joinedBadge.style.display = joinedUnread ? 'flex' : 'none';
+    if (joinedUnread) joinedBadge.textContent = joinedUnread > 9 ? '9+' : joinedUnread;
+    list.innerHTML = notifications.length ? notifications.map(n => `
+      <div class="notification-item" onclick="openNotification(${n.id})" style="${n.read ? 'opacity:.68;' : ''}">
+        <div class="notification-row">
+          <div class="notification-icon">&#10003;</div>
+          <div><div class="notification-title">${n.title}</div><div class="notification-text">${n.text}</div><div class="notification-time">${n.time}</div></div>
+        </div>
+      </div>`).join('') : '<div class="notification-empty">No notifications yet.</div>';
+  }
+
+  function openNotification(id) {
+    const n = notifications.find(x => x.id === id);
+    if (!n) return;
+    n.read = true;
+    document.getElementById('notification-panel').classList.remove('show');
+    renderNotifications();
+    if (n.planId) openDetail(n.planId);
+  }
+
+  document.addEventListener('click', function(event) {
+    const wrap = document.getElementById('notification-wrap');
+    if (wrap && !wrap.contains(event.target)) document.getElementById('notification-panel').classList.remove('show');
+  });
+
   function showPage(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + page).classList.add('active');
@@ -544,6 +665,7 @@
     if (page === 'myplans') { document.getElementById('nav-myplans').classList.add('active'); renderMyPlans(); }
     if (page === 'requests') { document.getElementById('nav-requests').classList.add('active'); renderRequests(); }
     updateRequestsBadge();
+    renderNotifications();
     window.scrollTo(0,0);
   }
 
@@ -687,7 +809,12 @@
     const p = plans.find(p => p.id === id);
     p.pending = p.pending.filter(n => n !== name);
     if (!p.interested.includes(name)) p.interested.push(name);
-    showToast(name + ' approved for \u201c' + p.title + '\u201d');
+    if (name === currentUser) {
+      addNotification('Join Request Accepted', p.host + ' accepted your request to join “' + p.title + '”.', p.id);
+      showToast('Your request was accepted');
+    } else {
+      showToast(name + ' approved for “' + p.title + '”');
+    }
     refreshAfterChange(id);
   }
 
@@ -702,6 +829,7 @@
     renderFeed();
     renderHero();
     updateRequestsBadge();
+    renderNotifications();
     if (currentDetailId === id) renderDetail(id);
     if (document.getElementById('page-myplans').classList.contains('active')) renderMyPlans();
     if (document.getElementById('page-requests').classList.contains('active')) renderRequests();
@@ -720,7 +848,7 @@
         <div class="people-list">
           ${p.pending.map(name => `
             <div class="person-row" style="justify-content:space-between;">
-              <div style="display:flex;align-items:center;gap:10px;"><div class="avatar">${initials(name)}</div>${name}</div>
+              <div style="display:flex;align-items:center;gap:10px;"><div class="avatar">${initials(name)}</div>${contactHtml(name)}</div>
               <div style="display:flex;gap:8px;">
                 <button class="join-btn joined" onclick="approveRequest(${p.id}, '${name}')">Approve</button>
                 <button class="join-btn" style="background:#FEE2E2;color:#B91C1C;" onclick="rejectRequest(${p.id}, '${name}')">Reject</button>
@@ -764,7 +892,7 @@
         <div class="people-list">
           ${p.pending.map(name => `
             <div class="person-row" style="justify-content:space-between;">
-              <div style="display:flex;align-items:center;gap:10px;"><div class="avatar">${initials(name)}</div>${name}</div>
+              <div style="display:flex;align-items:center;gap:10px;"><div class="avatar">${initials(name)}</div>${contactHtml(name)}</div>
               <div style="display:flex;gap:8px;">
                 <button class="join-btn joined" onclick="approveRequest(${p.id}, '${name}')">Approve</button>
                 <button class="join-btn" style="background:#FEE2E2;color:#B91C1C;" onclick="rejectRequest(${p.id}, '${name}')">Reject</button>
@@ -775,7 +903,7 @@
       <div class="detail-section">
         <h4>${p.interested.length ? p.interested.length + ' interested' : 'No one has joined yet'}</h4>
         <div class="people-list">
-          ${p.interested.map(n => `<div class="person-row"><div class="avatar">${initials(n)}</div>${n}</div>`).join('') || '<div class="detail-desc">Be the first to say you\'re in.</div>'}
+          ${p.interested.map(n => `<div class="person-row"><div class="avatar">${initials(n)}</div>${contactHtml(n)}</div>`).join('') || '<div class="detail-desc">Be the first to say you\'re in.</div>'}
         </div>
       </div>
     `;
@@ -840,7 +968,8 @@
     formCategory = null; formDate = null; formVisibility = 'company';
     const dateInput = document.getElementById('f-date');
     dateInput.min = new Date().toISOString().split('T')[0];
-    renderCatGrid(); renderVisGrid(); validateForm();
+    renderCatGrid(); renderVisGrid();
+  renderNotifications(); validateForm();
   }
 
   function validateForm() {
@@ -897,6 +1026,7 @@
   }
 
   renderCatGrid(); renderVisGrid();
+  renderNotifications();
 </script>
 </body>
 </html>
