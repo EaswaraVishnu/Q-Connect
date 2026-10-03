@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q-Connect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #3D5CF5;
+    --primary-dark: #2F46D9;
+    --purple: #7C3AED;
+    --purple-light: #EDE9FE;
+    --bg: #F5F7FB;
+    --card: #FFFFFF;
+    --ink: #111827;
+    --muted: #6B7280;
+    --line: #E5E9F0;
+    --success-bg: #DCFCE7; --success-text: #15803D;
+    --warning-bg: #FEF3C7; --warning-text: #B45309;
+    --hero-bg: #EAF0FF;
+    --sidebar-active: #EAF0FF;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; height:100%; }
+  body { font-family:'Inter',-apple-system,Arial,sans-serif; background: var(--bg); color: var(--ink); }
+  button { font-family:'Inter',sans-serif; }
+  input { font-family:'Inter',sans-serif; }
+
+  /* ============ LOGIN ============ */
+  #screen-login { min-height:100vh; display:flex; }
+  @media (max-width: 900px) { #screen-login { flex-direction:column; } .login-right { display:none; } }
+
+  .login-left { flex:1; background: linear-gradient(160deg,#F7F9FF 0%, #EEF2FF 60%, #F5F0FF 100%); display:flex; align-items:center; justify-content:center; padding: 40px 24px; }
+  .login-left-inner { width:100%; max-width: 420px; }
+  .login-logo-row { display:flex; align-items:center; gap:10px; margin-bottom: 30px; }
+  .login-logo-mark { width:42px; height:42px; border-radius:12px; background: linear-gradient(135deg, var(--primary), var(--purple)); display:flex; align-items:center; justify-content:center; }
+  .login-logo-mark span { color:#fff; font-weight:800; font-size:19px; }
+  .login-logo-name { font-weight:800; font-size:19px; color: var(--ink); }
+
+  .login-title-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom: 6px; }
+  .login-title-row h1 { font-size: 26px; font-weight:800; margin:0; background: linear-gradient(90deg, var(--primary), var(--purple)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .beta-pill { display:inline-flex; align-items:center; gap:5px; background: linear-gradient(90deg, var(--purple), var(--primary)); color:#fff; font-size:11.5px; font-weight:700; padding: 5px 11px; border-radius: 20px; }
+  .login-subtitle { color: var(--muted); font-size:14px; margin: 0 0 30px; }
+
+  .login-welcome { font-size: 27px; font-weight:800; color: var(--ink); margin: 0 0 6px; }
+  .login-welcome-sub { color: var(--muted); font-size:14px; margin: 0 0 26px; }
+
+  .login-card { background: var(--card); border-radius: 20px; padding: 30px 28px; box-shadow: 0 10px 35px rgba(30,40,80,0.08); border: 1px solid var(--line); }
+  .field-label { font-size:13px; font-weight:700; color: var(--ink); margin-bottom:7px; display:block; }
+  .input-wrap { position:relative; margin-bottom: 18px; }
+  .input-wrap input { width:100%; border:1px solid var(--line); border-radius:11px; padding: 13px 14px 13px 42px; font-size:14px; background: var(--bg); color: var(--ink); }
+  .input-wrap input::placeholder { color:#9AA3B2; }
+  .input-icon { position:absolute; left:13px; top:50%; transform:translateY(-50%); color:#9AA3B2; width:18px; height:18px; }
+  .input-suffix { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#9AA3B2; font-size:13px; }
+  .input-eye { position:absolute; right:13px; top:50%; transform:translateY(-50%); color:#9AA3B2; cursor:pointer; width:18px; height:18px; background:none; border:none; padding:0; }
+  .signin-btn { width:100%; background: var(--primary); color:#fff; border:none; padding: 14px; border-radius: 11px; font-size:15px; font-weight:700; cursor:pointer; }
+  .signin-btn:hover { background: var(--primary-dark); }
+  .forgot-link { display:block; text-align:center; color: var(--primary); font-size:13px; font-weight:600; margin-top: 16px; cursor:pointer; }
+  .login-footer { text-align:center; font-size:12px; color: var(--muted); margin-top: 22px; }
+  .login-footer b { color: var(--muted); }
+
+  .login-right { flex:1; background: linear-gradient(135deg, #3350EE 0%, #5B3EEF 55%, #8A2BE8 100%); color:#fff; padding: 50px 46px; display:flex; flex-direction:column; justify-content:center; }
+  .ai-pill { align-self:flex-end; display:inline-flex; align-items:center; gap:7px; background: rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.25); padding:9px 16px; border-radius:24px; font-size:13px; font-weight:600; }
+  .right-icon-wrap { position:relative; width:74px; height:74px; margin: 46px 0 34px; }
+  .right-icon-box { width:74px; height:74px; border-radius:20px; background: rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22); display:flex; align-items:center; justify-content:center; }
+  .right-icon-badge { position:absolute; top:-8px; right:-8px; width:26px; height:26px; border-radius:50%; background:#FFB020; display:flex; align-items:center; justify-content:center; font-size:12px; }
+  .right-heading { font-size: 38px; font-weight:800; line-height:1.15; margin: 0 0 20px; }
+  .right-heading .grad { background: linear-gradient(90deg,#BFD0FF,#E9D8FF); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .right-para { font-size: 15px; line-height:1.6; color: rgba(255,255,255,0.85); max-width: 440px; margin: 0 0 26px; }
+  .feature-pills { display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 40px; }
+  .feature-pill { display:inline-flex; align-items:center; gap:7px; background: rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); padding:8px 15px; border-radius:20px; font-size:12.5px; font-weight:600; }
+  .stat-row { display:flex; gap:14px; margin-top: 20px; }
+  .stat-glass { flex:1; background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.18); border-radius:14px; padding:16px 10px; text-align:center; }
+  .stat-glass .num { font-size:24px; font-weight:800; margin-bottom:2px; }
+  .stat-glass .lbl { font-size:11.5px; color: rgba(255,255,255,0.8); }
+
+  /* ============ APP SHELL ============ */
+  #app-shell { display:none; }
+  .app-layout { display:flex; min-height:100vh; }
+  .sidebar-nav { width: 250px; flex-shrink:0; background: var(--card); border-right:1px solid var(--line); display:flex; flex-direction:column; padding: 22px 16px; position: sticky; top:0; height:100vh; }
+  .sb-brand { display:flex; align-items:center; gap:10px; padding: 4px 8px 22px; }
+  .sb-brand-mark { width:32px; height:32px; border-radius:9px; background: linear-gradient(135deg, var(--primary), var(--purple)); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:15px; }
+  .sb-brand-name { font-weight:800; font-size:16px; }
+  .sb-nav { display:flex; flex-direction:column; gap:3px; }
+  .sb-link { display:flex; align-items:center; gap:11px; padding: 10px 12px; border-radius:10px; font-size:14px; font-weight:600; color: var(--muted); cursor:pointer; border:none; background:none; text-align:left; width:100%; }
+  .sb-link svg { width:18px; height:18px; flex-shrink:0; }
+  .sb-link:hover { background: var(--bg); }
+  .sb-link.active { background: var(--sidebar-active); color: var(--primary); }
+  .sb-spacer { flex:1; }
+  .sb-user { display:flex; align-items:center; gap:10px; padding: 12px 8px; border-top:1px solid var(--line); margin-top: 6px; }
+  .sb-avatar { width:36px; height:36px; border-radius:50%; background: var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; }
+  .sb-user-name { font-size:13.5px; font-weight:700; line-height:1.3; }
+  .sb-user-email { font-size:11px; color: var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px; }
+  .sb-logout { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color: var(--muted); padding: 10px 8px 2px; cursor:pointer; }
+  .sb-logout:hover { color: var(--ink); }
+
+  .main-area { flex:1; padding: 34px 44px 70px; max-width: 1180px; }
+  .page { display:none; }
+  .page.active { display:block; }
+
+  .welcome-h { font-size: 27px; font-weight:800; margin: 0 0 4px; }
+  .welcome-h .accent { color: var(--primary); }
+  .welcome-sub { color: var(--muted); font-size:14px; margin: 0 0 26px; }
+
+  .hero-card { background: var(--hero-bg); border-radius: 20px; padding: 26px 28px; margin-bottom: 22px; position:relative; overflow:hidden; }
+  .hero-eyebrow { font-size:11.5px; font-weight:800; color: var(--primary); letter-spacing:0.3px; margin-bottom:8px; }
+  .hero-title { font-size: 26px; font-weight:800; margin: 0 0 14px; }
+  .hero-pills { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  .pill { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; padding:6px 12px; border-radius:20px; }
+  .pill.p-green { background: var(--success-bg); color: var(--success-text); }
+  .pill.p-grey { background: var(--line); color: var(--muted); }
+  .pill.p-white { background: var(--card); color: var(--ink); border:1px solid var(--line); }
+  .hero-divider { height:1px; background: rgba(0,0,0,0.06); margin: 16px 0; }
+  .hero-foot { display:flex; gap:26px; font-size:13.5px; color: var(--muted); flex-wrap:wrap; }
+  .hero-foot b { color: var(--ink); }
+
+  .stat-cards { display:flex; gap:16px; margin-bottom: 26px; flex-wrap:wrap; }
+  @media (max-width: 760px) { .stat-cards { flex-direction:column; } }
+  .stat-card { background: var(--card); border:1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; position:relative; flex: 1 1 220px; }
+  .stat-card .lbl { font-size:13px; color: var(--muted); margin-bottom:8px; }
+  .stat-card .num { font-size:30px; font-weight:800; margin-bottom:4px; }
+  .stat-card .cap { font-size:12px; color: var(--muted); }
+  .stat-icon { position:absolute; top:18px; right:18px; width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; }
+  .stat-icon.blue { background:#E5EBFF; color: var(--primary); }
+  .stat-icon.green { background: var(--success-bg); color: var(--success-text); }
+  .stat-icon.purple { background: var(--purple-light); color: var(--purple); }
+
+  .two-col { display:flex; gap:18px; margin-bottom: 30px; flex-wrap:wrap; }
+  @media (max-width: 760px) { .two-col { flex-direction:column; } }
+  .panel { background: var(--card); border:1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; flex: 1 1 320px; }
+  .panel-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
+  .panel-head h3 { font-size:15.5px; font-weight:800; margin:0; }
+  .panel-head a { font-size:12.5px; font-weight:700; color: var(--primary); cursor:pointer; }
+  .list-row { display:flex; align-items:center; justify-content:space-between; padding: 12px 10px; border-radius:10px; }
+  .list-row:hover { background: var(--bg); cursor:pointer; }
+  .list-row + .list-row { border-top:1px solid var(--line); }
+  .list-row-title { font-size:13.5px; font-weight:700; margin-bottom:2px; }
+  .list-row-sub { font-size:12px; color: var(--muted); }
+  .empty-mini { color: var(--muted); font-size:13px; text-align:center; padding: 26px 10px; }
+
+  .section-head { display:flex; align-items:baseline; justify-content:space-between; margin: 6px 0 16px; flex-wrap:wrap; gap:10px; }
+  .section-head h2 { font-size:18px; font-weight:800; margin:0; }
+  .post-btn { background: var(--primary); color:#fff; border:none; padding: 11px 18px; border-radius:10px; font-size:13.5px; font-weight:700; cursor:pointer; }
+  .post-btn:hover { background: var(--primary-dark); }
+
+  .filters { display:flex; gap:8px; margin-bottom: 16px; flex-wrap:wrap; }
+  .filter-opt { padding: 8px 15px; border-radius:20px; font-size:12.5px; font-weight:700; border:1px solid var(--line); color: var(--muted); background: var(--card); cursor:pointer; }
+  .filter-opt.active { background: var(--primary); color:#fff; border-color: var(--primary); }
+
+  .card-grid { display:flex; flex-wrap:wrap; gap: 16px; }
+  .card-grid .card, .card-grid .empty-state { flex: 1 1 290px; max-width: 400px; }
+  .empty-state { flex-basis: 100% !important; max-width: none !important; }
+  .card { background: var(--card); border-radius: var(--radius); padding: 18px 19px; box-shadow: 0 1px 3px rgba(20,30,60,0.05); cursor: pointer; border: 1px solid var(--line); transition: box-shadow .15s, transform .15s; }
+  .card:hover { box-shadow: 0 8px 22px rgba(30,45,90,0.09); transform: translateY(-2px); }
+  .card-top { display:flex; gap:12px; }
+  .badge { width: 40px; height:40px; border-radius: 11px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:10px; flex-shrink:0; }
+  .badge.b-outdoors { background: var(--success-bg); color: var(--success-text); }
+  .badge.b-sports   { background:#E5EBFF; color: var(--primary); }
+  .badge.b-food     { background: var(--warning-bg); color: var(--warning-text); }
+  .badge.b-games    { background: var(--purple-light); color: var(--purple); }
+  .card-title { font-weight:700; font-size:14.5px; margin:0 0 2px; }
+  .card-host { font-size: 12px; color: var(--muted); }
+  .meta-row { display:flex; flex-wrap:wrap; gap:4px 8px; font-size:11.5px; color: var(--muted); margin-top:11px; font-weight:600; }
+  .meta-row span:not(:last-child)::after { content:"\00b7"; margin-left:8px; color: var(--line); font-weight:400; }
+  .card-desc { font-size:12.5px; color: var(--muted); margin-top:9px; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+  .avatars { display:flex; }
+  .avatar { width:23px; height:23px; border-radius:50%; background: var(--primary); color:#fff; font-size:9.5px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid var(--card); margin-left:-7px; }
+  .avatar:first-child { margin-left:0; }
+  .count-label { font-size:11px; color: var(--muted); margin-left:6px; }
+  .join-btn { background: var(--primary); color:#fff; border:none; font-size:12.5px; font-weight:700; padding:8px 16px; border-radius:9px; cursor:pointer; }
+  .join-btn.joined { background: var(--success-bg); color: var(--success-text); }
+  .join-btn.host { background:none; color: var(--muted); font-weight:600; padding:8px 4px; }
+
+  .empty-state { text-align:center; padding: 60px 30px; color: var(--muted); }
+  .empty-state .glyph { font-size:32px; margin-bottom:10px; }
+  .empty-state h3 { font-size:16px; margin:0 0 6px; color: var(--ink); }
+  .empty-state p { font-size:13px; margin:0; line-height:1.5; }
+
+  .tabrow { display:flex; gap:8px; margin-bottom: 18px; }
+  .tabbtn { padding:9px 18px; border-radius:9px; font-size:13.5px; font-weight:700; border:1px solid var(--line); color: var(--muted); background: var(--card); cursor:pointer; }
+  .tabbtn.active { background: var(--primary); color:#fff; border-color: var(--primary); }
+
+  /* ---------- Notifications ---------- */
+  .notification-wrap { position:fixed; top:22px; right:30px; z-index:80; }
+  .notification-btn { width:42px; height:42px; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 14px rgba(20,30,60,0.08); position:relative; }
+  .notification-btn:hover { background:var(--bg); }
+  .notification-badge { position:absolute; top:-5px; right:-5px; min-width:18px; height:18px; padding:0 5px; border-radius:10px; background:#E11D48; color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
+  .notification-panel { display:none; position:absolute; top:50px; right:0; width:340px; background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:0 14px 35px rgba(20,30,60,0.14); overflow:hidden; }
+  .notification-panel.show { display:block; }
+  .notification-head { padding:15px 17px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
+  .notification-head h3 { margin:0; font-size:14px; font-weight:800; }
+  .notification-head button { border:none; background:none; color:var(--primary); font-size:11.5px; font-weight:700; cursor:pointer; }
+  .notification-item { padding:14px 17px; border-bottom:1px solid var(--line); cursor:pointer; }
+  .notification-item:hover { background:var(--bg); }
+  .notification-item:last-child { border-bottom:none; }
+  .notification-icon { width:34px; height:34px; border-radius:10px; background:var(--success-bg); color:var(--success-text); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .notification-row { display:flex; gap:11px; align-items:flex-start; }
+  .notification-title { font-size:12.5px; font-weight:800; margin-bottom:3px; }
+  .notification-text { font-size:11.5px; color:var(--muted); line-height:1.45; }
+  .notification-time { font-size:10.5px; color:#9AA3B2; margin-top:5px; }
+  .notification-empty { padding:28px 18px; text-align:center; color:var(--muted); font-size:12.5px; }
+  .tabbtn-wrap { position:relative; display:inline-flex; }
+  .tab-badge { position:absolute; top:-7px; right:-7px; min-width:18px; height:18px; padding:0 5px; border-radius:10px; background:#E11D48; color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
+  @media (max-width:760px) { .notification-wrap { right:16px; top:14px; } .notification-panel { width:300px; right:-4px; } }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop { display:none; position: fixed; inset:0; background: rgba(15,20,40,0.5); z-index: 90; align-items:flex-start; justify-content:center; padding: 60px 20px; overflow-y:auto; }
+  .modal-backdrop.show { display:flex; }
+  .modal-panel { background: var(--card); border-radius: 18px; width:100%; max-width: 560px; box-shadow: 0 24px 60px rgba(0,0,0,0.25); }
+  .modal-head { display:flex; align-items:center; justify-content:space-between; padding: 20px 24px; border-bottom:1px solid var(--line); }
+  .modal-head h2 { font-size:16.5px; font-weight:800; margin:0; }
+  .modal-close { background: var(--bg); border:none; width:32px; height:32px; border-radius:9px; font-size:16px; color: var(--muted); cursor:pointer; }
+  .modal-body { padding: 22px 24px; }
+  .modal-foot { padding: 16px 24px 22px; }
+
+  .form-grid { display:flex; flex-wrap:wrap; gap: 16px; }
+  .field { flex: 1 1 45%; }
+  .field.full { flex: 1 1 100%; }
+  .field label { display:block; font-size:12.5px; font-weight:700; color: var(--ink); margin-bottom:6px; }
+  .field input, .field textarea { width:100%; border:1px solid var(--line); border-radius:10px; padding:11px 12px; font-size:13.5px; background: var(--card); color: var(--ink); }
+  .field input[type="date"], .field input[type="time"] { min-height:42px; cursor:pointer; }
+  .field textarea { resize:none; }
+  .cat-grid { display:flex; gap:8px; flex-wrap:wrap; }
+  .cat-opt { flex: 1 1 21%; display:flex; flex-direction:column; align-items:center; gap:5px; padding:9px 4px; border-radius:10px; border:1px solid var(--line); font-size:10.5px; font-weight:600; color: var(--muted); cursor:pointer; background: var(--card); }
+  .cat-opt .dot { width:20px; height:20px; border-radius:50%; }
+  .cat-opt.active { border-color: var(--primary); color: var(--primary); background:#E5EBFF; }
+  .day-row, .vis-row { display:flex; gap:8px; }
+  .day-opt, .vis-opt { flex:1; text-align:center; padding:10px; border-radius:10px; border:1px solid var(--line); font-size:12.5px; font-weight:700; color: var(--muted); cursor:pointer; background: var(--card); }
+  .day-opt.active, .vis-opt.active { background: var(--primary); color:#fff; border-color: var(--primary); }
+  .vis-hint { font-size:11.5px; color: var(--muted); margin-top:6px; line-height:1.4; }
+  .submit-btn { width:100%; background: var(--primary); color:#fff; border:none; padding:13px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; }
+  .submit-btn:disabled { background:#B9C3E0; cursor:not-allowed; }
+
+  .detail-badge-row { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .detail-title { font-size:19px; font-weight:800; margin:0 0 3px; }
+  .detail-host { font-size:12.5px; color: var(--muted); }
+  .vis-tag { display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; color: var(--muted); background: var(--line); padding:4px 9px; border-radius:20px; margin-top: 8px; }
+  .detail-meta { background: var(--bg); border-radius: 12px; border:1px solid var(--line); padding:14px 16px; margin: 16px 0; display:flex; flex-direction:column; gap:10px; font-size:13px; }
+  .detail-meta-row { display:flex; align-items:center; gap:10px; }
+  .detail-meta-row svg { width:16px; height:16px; color: var(--muted); flex-shrink:0; }
+  .detail-section { margin-top: 18px; }
+  .detail-section h4 { font-size:13px; margin:0 0 8px; font-weight:800; }
+  .detail-desc { font-size:13.5px; color: var(--muted); line-height:1.6; }
+  .people-list { display:flex; flex-direction:column; gap:10px; }
+  .person-name-wrap { position:relative; display:inline-flex; align-items:center; cursor:pointer; }
+  .contact-card { display:none; position:absolute; left:0; bottom:calc(100% + 10px); width:250px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px 14px; box-shadow:0 12px 30px rgba(20,30,60,0.16); z-index:30; }
+  .person-name-wrap:hover .contact-card { display:block; }
+  .contact-card::after { content:""; position:absolute; left:18px; bottom:-6px; width:10px; height:10px; background:var(--card); border-right:1px solid var(--line); border-bottom:1px solid var(--line); transform:rotate(45deg); }
+  .contact-card.below { bottom:auto; top:calc(100% + 10px); }
+  .contact-card.below::after { bottom:auto; top:-6px; border:none; border-left:1px solid var(--line); border-top:1px solid var(--line); }
+  .contact-card-top { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+  .contact-card-avatar { width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0; }
+  .contact-card-name { font-size:13px; font-weight:800; color:var(--ink); }
+  .contact-card-role { font-size:11px; color:var(--muted); margin-top:2px; }
+  .contact-card-line { font-size:11.5px; color:var(--muted); line-height:1.5; margin-top:4px; }
+  .person-row { display:flex; align-items:center; gap:10px; font-size:13px; }
+  .person-row .avatar { position:static; margin:0; width:28px; height:28px; font-size:11px; }
+  .detail-cta button { width:100%; padding:13px; border-radius:11px; border:none; font-size:14.5px; font-weight:700; cursor:pointer; }
+  .detail-cta .join { background: var(--primary); color:#fff; }
+  .detail-cta .joined { background: var(--success-bg); color: var(--success-text); }
+  .detail-cta .hostnote { background: var(--bg); color: var(--muted); border:1px solid var(--line); }
+
+  .toast { position: fixed; left:50%; bottom: 30px; transform: translateX(-50%) translateY(20px); background: var(--ink); color:#fff; padding: 13px 22px; border-radius: 12px; font-size:13.5px; font-weight:600; z-index:120; opacity:0; transition: all .25s ease; pointer-events:none; box-shadow:0 8px 20px rgba(0,0,0,0.25); white-space:nowrap; }
+  .toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+  <!-- ============ LOGIN ============ -->
+  <div id="screen-login">
+    <div class="login-left">
+      <div class="login-left-inner">
+        <div class="login-logo-row">
+          <div class="login-logo-mark"><span>Q</span></div>
+          <div class="login-logo-name">Quadrant IT Services</div>
+        </div>
+        <div class="login-title-row">
+          <h1>Q-Connect</h1>
+          <span class="beta-pill">&#10024; Beta</span>
+        </div>
+        <p class="login-subtitle">Employee Activity &amp; Weekend Planning</p>
+
+        <div class="login-welcome">Welcome back</div>
+        <p class="login-welcome-sub">Sign in to see this weekend's plans</p>
+
+        <div class="login-card">
+          <label class="field-label">Email Address</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg>
+            <input id="login-email" type="text" placeholder="username" style="padding-right:170px;">
+            <span class="input-suffix">@quadrantitservices.com</span>
+          </div>
+          <label class="field-label">Password</label>
+          <div class="input-wrap" style="margin-bottom:6px;">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <input id="login-password" type="password" placeholder="Enter your password">
+            <button class="input-eye" onclick="togglePw()" aria-label="Show password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div style="height:14px;"></div>
+          <button class="signin-btn" onclick="doLogin()">Sign In</button>
+          <div class="forgot-link">Forgot Password?</div>
+        </div>
+        <div class="login-footer">Powered by <b>Quadrant IT Services</b> &middot; Secured with enterprise-grade encryption</div>
+      </div>
+    </div>
+
+    <div class="login-right">
+      <span class="ai-pill">&#10024; Employee Engagement Platform</span>
+      <div class="right-icon-wrap">
+        <div class="right-icon-box">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="9" cy="15" r="1.4" fill="#fff" stroke="none"/><circle cx="15" cy="15" r="1.4" fill="#fff" stroke="none"/></svg>
+        </div>
+        <div class="right-icon-badge">&#10024;</div>
+      </div>
+      <h2 class="right-heading">Find your people<br><span class="grad">this weekend</span></h2>
+      <p class="right-para">Discover what colleagues are doing this weekend, join in a tap, and turn free time into shared time &mdash; across every team.</p>
+      <div class="feature-pills">
+        <span class="feature-pill">&#128269; Discover plans</span>
+        <span class="feature-pill">&#9889; One-tap join</span>
+        <span class="feature-pill">&#129309; Cross-team</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat-glass"><div class="num">500+</div><div class="lbl">Plans Posted</div></div>
+        <div class="stat-glass"><div class="num">3x</div><div class="lbl">Cross-team Joins</div></div>
+        <div class="stat-glass"><div class="num">&lt;60s</div><div class="lbl">To Post a Plan</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ APP SHELL ============ -->
+  <div id="app-shell">
+    <div class="app-layout">
+      <div class="sidebar-nav">
+        <div class="sb-brand">
+          <div class="sb-brand-mark">Q</div>
+          <div class="sb-brand-name">Q-Connect</div>
+        </div>
+        <div class="sb-nav">
+          <button class="sb-link active" id="nav-feed" onclick="showPage('feed')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+            Dashboard
+          </button>
+          <button class="sb-link" onclick="openCreateModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            Post Activity
+          </button>
+          <button class="sb-link" id="nav-myplans" onclick="showPage('myplans')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+            My Plans
+          </button>
+          <button class="sb-link" id="nav-requests" onclick="showPage('requests')" style="position:relative;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            Requests
+            <span id="requests-badge" style="display:none; margin-left:auto; background:#E11D48; color:#fff; font-size:10.5px; font-weight:800; padding:1px 7px; border-radius:10px;"></span>
+          </button>
+          <button class="sb-link" onclick="showToast('Profile settings coming soon')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+            Profile
+          </button>
+        </div>
+        <div class="sb-spacer"></div>
+        <div class="sb-user">
+          <div class="sb-avatar">YO</div>
+          <div>
+            <div class="sb-user-name">You</div>
+            <div class="sb-user-email">you@quadrantitservices.com</div>
+          </div>
+        </div>
+        <div class="sb-logout" onclick="doLogout()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+          Logout
+        </div>
+      </div>
+
+      <div class="main-area">
+        <div class="notification-wrap" id="notification-wrap">
+          <button class="notification-btn" onclick="toggleNotifications(event)" aria-label="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+            <span class="notification-badge" id="notification-badge" style="display:none"></span>
+          </button>
+          <div class="notification-panel" id="notification-panel">
+            <div class="notification-head"><h3>Notifications</h3><button onclick="markNotificationsRead(event)">Mark all read</button></div>
+            <div id="notification-list"></div>
+          </div>
+        </div>
+
+        <!-- FEED / DASHBOARD PAGE -->
+        <div class="page active" id="page-feed">
+          <h1 class="welcome-h">Welcome back, <span class="accent">You</span>! &#128075;</h1>
+          <p class="welcome-sub">Here's what's happening this weekend</p>
+
+          <div class="hero-card">
+            <div class="hero-eyebrow">THIS WEEKEND</div>
+            <div class="hero-title" id="hero-title">Sat, Sep 27 &ndash; Sun, Sep 28</div>
+            <div class="hero-pills">
+              <span class="pill p-green" id="hero-pill-open">4 plans open</span>
+              <span class="pill p-grey" id="hero-pill-cats">4 categories</span>
+              <span class="pill p-white">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+                Post before Fri, 5:00 PM to reach the most people
+              </span>
+            </div>
+            <div class="hero-divider"></div>
+            <div class="hero-foot">
+              <span>Total interested: <b id="hero-total-interested">6</b></span>
+              <span>Updated: <b>just now</b></span>
+            </div>
+          </div>
+
+          <div class="stat-cards">
+            <div class="stat-card">
+              <div class="lbl">Plans this weekend</div>
+              <div class="num" id="stat-total">4</div>
+              <div class="cap">Across all categories</div>
+              <div class="stat-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
+            </div>
+            <div class="stat-card">
+              <div class="lbl">You're joined</div>
+              <div class="num" id="stat-joined">0</div>
+              <div class="cap">Tap "I'm in" on any plan</div>
+              <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div>
+            </div>
+            <div class="stat-card">
+              <div class="lbl">Hosted by you</div>
+              <div class="num" id="stat-hosted">0</div>
+              <div class="cap">Plans you've posted</div>
+              <div class="stat-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="panel">
+              <div class="panel-head"><h3>This weekend's plans</h3><a onclick="scrollToBrowse()">View all</a></div>
+              <div id="mini-weekend-list"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h3>Suggested for you</h3><a onclick="scrollToBrowse()">View all</a></div>
+              <div id="mini-suggested-list"></div>
+            </div>
+          </div>
+
+          <div id="browse-anchor"></div>
+          <div class="section-head">
+            <h2>Browse all plans</h2>
+            <button class="post-btn" onclick="openCreateModal()">+ Post an activity</button>
+          </div>
+          <div class="filters" id="day-filters"></div>
+          <div class="filters" id="cat-filters"></div>
+          <div class="card-grid" id="feed-list"></div>
+        </div>
+
+        <!-- MY PLANS PAGE -->
+        <div class="page" id="page-myplans">
+          <h1 class="welcome-h">My plans</h1>
+          <p class="welcome-sub">Everything you're hosting or have joined</p>
+          <div class="tabrow">
+            <button class="tabbtn active" id="tab-hosted" onclick="setMyTab('hosted')">Hosted by me</button>
+            <span class="tabbtn-wrap">
+              <button class="tabbtn" id="tab-joined" onclick="setMyTab('joined')">Joined</button>
+              <span class="tab-badge" id="joined-badge" style="display:none"></span>
+            </span>
+          </div>
+          <div class="card-grid" id="myplans-list"></div>
+        </div>
+
+        <!-- REQUESTS PAGE -->
+        <div class="page" id="page-requests">
+          <h1 class="welcome-h">Join requests</h1>
+          <p class="welcome-sub">Approve or reject people who want to join plans you're hosting</p>
+          <div id="requests-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE MODAL -->
+  <div class="modal-backdrop" id="modal-create" onclick="if(event.target===this) closeCreateModal()">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2>Post an activity</h2>
+        <button class="modal-close" onclick="closeCreateModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field full">
+            <label>What's the plan?</label>
+            <input id="f-title" type="text" placeholder="e.g. Evening cycling around Hussain Sagar" oninput="validateForm()">
+          </div>
+          <div class="field full">
+            <label>Category</label>
+            <div class="cat-grid" id="cat-grid"></div>
+          </div>
+          <div class="field">
+            <label>Date</label>
+            <input id="f-date" type="date" onchange="formDate = this.value; validateForm()" oninput="validateForm()">
+          </div>
+          <div class="field">
+            <label>Time</label>
+            <input id="f-time" type="time" onchange="validateForm()" oninput="validateForm()">
+          </div>
+          <div class="field full">
+            <label>Location</label>
+            <input id="f-location" type="text" placeholder="e.g. KBR Park, Jubilee Hills" oninput="validateForm()">
+          </div>
+          <div class="field full">
+            <label>Details (optional)</label>
+            <textarea id="f-desc" rows="3" placeholder="Anything people should know before joining"></textarea>
+          </div>
+          <div class="field full">
+            <label>Who can see this</label>
+            <div class="vis-row" id="vis-grid"></div>
+            <div class="vis-hint" id="vis-hint"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="submit-btn" id="submit-btn" disabled onclick="submitPlan()">Post plan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <div class="modal-backdrop" id="modal-detail" onclick="if(event.target===this) closeDetailModal()">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2>Activity details</h2>
+        <button class="modal-close" onclick="closeDetailModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="detail-body"></div>
+      <div class="modal-foot detail-cta" id="detail-cta"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+  const CATEGORIES = {
+    outdoors: { label: 'Outdoors', cls: 'b-outdoors', abbr: 'OUT', dot: '#15803D' },
+    sports:   { label: 'Sports',   cls: 'b-sports',   abbr: 'SPT', dot: '#3D5CF5' },
+    food:     { label: 'Food',     cls: 'b-food',     abbr: 'FOOD', dot: '#B45309' },
+    games:    { label: 'Games',    cls: 'b-games',    abbr: 'GME', dot: '#7C3AED' },
+  };
+
+  let plans = [
+    { id: 1, title: 'Sunrise trek at Ananthagiri Hills', category: 'outdoors', day: 'Sat', time: '5:30 AM', location: 'Ananthagiri Hills, Vikarabad', description: "Early start, back by 1 PM. Carpooling from office parking lot \u2014 2 seats free.", host: 'Priya S.', visibility: 'company', interested: ['Arjun K.', 'Meena R.'], pending: ['Divya M.'] },
+    { id: 2, title: '5-a-side football', category: 'sports', day: 'Sun', time: '6:00 PM', location: 'Football turf, Gachibowli', description: "Need 3 more players. All skill levels welcome, we're just here to run around.", host: 'Karthik V.', visibility: 'company', interested: ['Divya M.', 'Rahul T.', 'Sanjay P.', 'You'], pending: [] },
+    { id: 3, title: 'Sunday brunch crawl', category: 'food', day: 'Sun', time: '11:00 AM', location: 'Jubilee Hills', description: 'Trying 3 new cafes back to back, with an Irani chai stop at the end. Come hungry, leave full.', host: 'Meena R.', visibility: 'team', interested: ['Priya S.'], pending: [] },
+    { id: 4, title: 'Board game afternoon', category: 'games', day: 'Sat', time: '3:00 PM', location: 'My place, Kondapur', description: 'Bringing Catan and Codenames. Snacks provided, just bring yourself.', host: 'Arjun K.', visibility: 'company', interested: [], pending: [] },
+  ];
+
+  // ---------- helpers ----------
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function todayStr() {            // local date (toISOString would give the UTC date -> wrong in India mornings)
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  let notifSeq = 2000;
+
+  let currentUser = 'You';
+  let notifications = [
+    { id: 1001, title:'Join Request Accepted', text:'Karthik V. accepted your request to join “5-a-side football”.', planId:2, read:false, time:'Today' }
+  ];
+
+  const CONTACTS = {
+    'Priya S.':   { role:'Software Engineer', department:'Integration', email:'priya.s@quadrantitservices.com', phone:'+91 98765 43210' },
+    'Arjun K.':   { role:'Software Engineer', department:'Technology', email:'arjun.k@quadrantitservices.com', phone:'+91 98765 43211' },
+    'Meena R.':   { role:'Business Analyst', department:'Operations', email:'meena.r@quadrantitservices.com', phone:'+91 98765 43212' },
+    'Divya M.':   { role:'Software Engineer', department:'Technology', email:'divya.m@quadrantitservices.com', phone:'+91 98765 43213' },
+    'Rahul T.':   { role:'QA Engineer', department:'Quality', email:'rahul.t@quadrantitservices.com', phone:'+91 98765 43214' },
+    'Sanjay P.':  { role:'Software Engineer', department:'Integration', email:'sanjay.p@quadrantitservices.com', phone:'+91 98765 43215' },
+    'Karthik V.': { role:'Software Engineer', department:'Technology', email:'karthik.v@quadrantitservices.com', phone:'+91 98765 43216' }
+  };
+
+  function contactHtml(name, below) {
+    const c = CONTACTS[name] || { role:'Employee', department:'Quadrant IT Services', email:name.toLowerCase().replace(/[^a-z0-9]+/g,'.').replace(/\.$/,'') + '@quadrantitservices.com' };
+    return `<span class="person-name-wrap">${name}<span class="contact-card${below ? ' below' : ''}">
+      <span class="contact-card-top"><span class="contact-card-avatar">${initials(name)}</span><span><span class="contact-card-name">${name}</span><span class="contact-card-role">${c.role}</span></span></span>
+      <span class="contact-card-line"><b>Department:</b> ${c.department}</span>
+      <span class="contact-card-line"><b>Email:</b> ${c.email}</span>
+      <span class="contact-card-line"><b>Phone:</b> ${c.phone || 'Not available'}</span>
+    </span></span>`;
+  }
+  let dayFilter = 'All';
+  let catFilter = 'All';
+  let myTab = 'hosted';
+  let formCategory = null;
+  let formDate = null;
+  let formVisibility = 'company';
+  let currentDetailId = null;
+
+  function togglePw() {
+    const inp = document.getElementById('login-password');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  function doLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const pw = document.getElementById('login-password').value;
+    if (!email || !pw) { alert('Please enter your username and password.'); return; }
+    document.getElementById('screen-login').style.display = 'none';
+    document.getElementById('app-shell').style.display = 'block';
+    showPage('feed');
+  }
+  function doLogout() {
+    closeCreateModal(); closeDetailModal();
+    document.getElementById('notification-panel').classList.remove('show');
+    document.getElementById('login-password').value = '';
+    document.getElementById('app-shell').style.display = 'none';
+    document.getElementById('screen-login').style.display = 'grid';
+  }
+
+  function scrollToBrowse() {
+    document.getElementById('browse-anchor').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function addNotification(title, text, planId) {
+    notifications.unshift({ id: ++notifSeq, title, text, planId, read:false, time:'Just now' });
+    renderNotifications();
+  }
+
+  function toggleNotifications(event) {
+    event.stopPropagation();
+    const panel = document.getElementById('notification-panel');
+    panel.classList.toggle('show');
+    renderNotifications();
+  }
+
+  function markNotificationsRead(event) {
+    event.stopPropagation();
+    notifications.forEach(n => n.read = true);
+    renderNotifications();
+  }
+
+  function renderNotifications() {
+    const list = document.getElementById('notification-list');
+    const badge = document.getElementById('notification-badge');
+    const joinedBadge = document.getElementById('joined-badge');
+    if (!list) return;
+    const unread = notifications.filter(n => !n.read).length;
+    badge.style.display = unread ? 'flex' : 'none';
+    if (unread) badge.textContent = unread > 9 ? '9+' : unread;
+    const joinedUnread = notifications.filter(n => !n.read && n.planId && plans.some(p => p.id === n.planId && p.interested.includes(currentUser))).length;
+    joinedBadge.style.display = joinedUnread ? 'flex' : 'none';
+    if (joinedUnread) joinedBadge.textContent = joinedUnread > 9 ? '9+' : joinedUnread;
+    list.innerHTML = notifications.length ? notifications.map(n => `
+      <div class="notification-item" onclick="openNotification(${n.id})" style="${n.read ? 'opacity:.68;' : ''}">
+        <div class="notification-row">
+          <div class="notification-icon">&#10003;</div>
+          <div><div class="notification-title">${esc(n.title)}</div><div class="notification-text">${esc(n.text)}</div><div class="notification-time">${n.time}</div></div>
+        </div>
+      </div>`).join('') : '<div class="notification-empty">No notifications yet.</div>';
+  }
+
+  function openNotification(id) {
+    const n = notifications.find(x => x.id === id);
+    if (!n) return;
+    n.read = true;
+    document.getElementById('notification-panel').classList.remove('show');
+    renderNotifications();
+    if (n.planId) openDetail(n.planId);
+  }
+
+  document.addEventListener('click', function(event) {
+    const wrap = document.getElementById('notification-wrap');
+    if (wrap && !wrap.contains(event.target)) document.getElementById('notification-panel').classList.remove('show');
+  });
+
+  function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    document.querySelectorAll('.sb-link').forEach(a => a.classList.remove('active'));
+    if (page === 'feed') { document.getElementById('nav-feed').classList.add('active'); renderFeed(); renderHero(); }
+    if (page === 'myplans') { document.getElementById('nav-myplans').classList.add('active'); renderMyPlans(); }
+    if (page === 'requests') { document.getElementById('nav-requests').classList.add('active'); renderRequests(); }
+    updateRequestsBadge();
+    renderNotifications();
+    window.scrollTo(0,0);
+  }
+
+  function updateRequestsBadge() {
+    const count = plans.filter(p => p.host === currentUser).reduce((s,p) => s + p.pending.length, 0);
+    const badge = document.getElementById('requests-badge');
+    if (count > 0) { badge.style.display = 'inline-block'; badge.textContent = count; }
+    else { badge.style.display = 'none'; }
+  }
+
+  let toastTimer = null;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function metaRow(p) {
+    const dateLabel = p.date ? formatPlanDate(p.date) : p.day;
+    return `<div class="meta-row"><span>${dateLabel}</span><span>${esc(p.time)}</span><span>${esc(p.location)}</span></div>`;
+  }
+  function avatarsHtml(list) {
+    if (!list.length) return '<span class="count-label">No one yet</span>';
+    return `<div style="display:flex;align-items:center;">
+      <div class="avatars">${list.slice(0,4).map(n => `<div class="avatar">${initials(n)}</div>`).join('')}</div>
+      <span class="count-label">${list.length} interested</span>
+    </div>`;
+  }
+  function initials(name) { return name.split(' ').map(n => n[0]).join('').slice(0,2); }
+
+  function cardHtml(p) {
+    const cat = CATEGORIES[p.category];
+    const joined = p.interested.includes(currentUser);
+    const pendingMe = p.pending.includes(currentUser);
+    const isHost = p.host === currentUser;
+    let btn;
+    if (isHost) {
+      btn = p.pending.length
+        ? `<button class="join-btn" style="background:#FEF3C7;color:#B45309;" onclick="event.stopPropagation(); openDetail(${p.id})">${p.pending.length} request${p.pending.length>1?'s':''}</button>`
+        : `<span class="join-btn host">Your plan</span>`;
+    }
+    else if (joined) btn = `<button class="join-btn joined" onclick="event.stopPropagation(); leavePlan(${p.id})">You're in</button>`;
+    else if (pendingMe) btn = `<button class="join-btn" style="background:#FEF3C7;color:#B45309;" onclick="event.stopPropagation(); cancelRequest(${p.id})">Requested</button>`;
+    else btn = `<button class="join-btn" onclick="event.stopPropagation(); requestJoin(${p.id})">I'm in</button>`;
+
+    return `<div class="card" onclick="openDetail(${p.id})">
+      <div class="card-top">
+        <div class="badge ${cat.cls}">${cat.abbr}</div>
+        <div>
+          <div class="card-title">${esc(p.title)}</div>
+          <div class="card-host">Posted by ${esc(p.host)}</div>
+        </div>
+      </div>
+      ${metaRow(p)}
+      <div class="card-desc">${esc(p.description)}</div>
+      <div class="card-footer">${avatarsHtml(p.interested)}${btn}</div>
+    </div>`;
+  }
+
+  function renderWeekendTitle() {
+    const now = new Date(); now.setHours(0,0,0,0);
+    const dow = now.getDay();                       // 0=Sun ... 6=Sat
+    const sat = new Date(now);
+    sat.setDate(now.getDate() + (dow === 0 ? -1 : 6 - dow));
+    const sun = new Date(sat); sun.setDate(sat.getDate() + 1);
+    const f = d => d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+    document.getElementById('hero-title').textContent = f(sat) + ' \u2013 ' + f(sun);
+  }
+
+  function renderHero() {
+    renderWeekendTitle();
+    const total = plans.length;
+    const cats = new Set(plans.map(p => p.category)).size;
+    const totalInterested = plans.reduce((s,p) => s + p.interested.length, 0);
+    document.getElementById('hero-pill-open').textContent = total + ' plan' + (total===1?'':'s') + ' open';
+    document.getElementById('hero-pill-cats').textContent = cats + ' categor' + (cats===1?'y':'ies');
+    document.getElementById('hero-total-interested').textContent = totalInterested;
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-joined').textContent = plans.filter(p => p.interested.includes(currentUser)).length;
+    document.getElementById('stat-hosted').textContent = plans.filter(p => p.host === currentUser).length;
+
+    const weekend = plans.slice(0,3).map(p => `
+      <div class="list-row" onclick="openDetail(${p.id})">
+        <div>
+          <div class="list-row-title">${esc(p.title)}</div>
+          <div class="list-row-sub">${p.date ? formatPlanDate(p.date) : p.day} &middot; ${esc(p.time)} &middot; ${esc(p.location)}</div>
+        </div>
+        <span class="pill ${p.interested.length ? 'p-green' : 'p-grey'}">${p.interested.length} interested</span>
+      </div>`).join('');
+    document.getElementById('mini-weekend-list').innerHTML = weekend || '<div class="empty-mini">No plans yet</div>';
+
+    const suggested = plans.filter(p => !p.interested.includes(currentUser) && p.host !== currentUser).slice(0,3).map(p => `
+      <div class="list-row" onclick="openDetail(${p.id})">
+        <div>
+          <div class="list-row-title">${p.title}</div>
+          <div class="list-row-sub">Hosted by ${esc(p.host)}</div>
+        </div>
+        <span class="pill p-white">${CATEGORIES[p.category].label}</span>
+      </div>`).join('');
+    document.getElementById('mini-suggested-list').innerHTML = suggested || '<div class="empty-mini">You\'re all caught up</div>';
+  }
+
+  function renderDayFilters() {
+    const days = ['All','Sat','Sun','Other'];
+    document.getElementById('day-filters').innerHTML = days.map(d =>
+      `<div class="filter-opt ${dayFilter===d?'active':''}" onclick="setDayFilter('${d}')">${d==='All'?'All days':d==='Sat'?'Saturday':d==='Sun'?'Sunday':'Other days'}</div>`
+    ).join('');
+  }
+  function renderCatFilters() {
+    const cats = [['All','All types']].concat(Object.entries(CATEGORIES).map(([k,v]) => [k, v.label]));
+    document.getElementById('cat-filters').innerHTML = cats.map(([k,label]) =>
+      `<div class="filter-opt ${catFilter===k?'active':''}" onclick="setCatFilter('${k}')">${label}</div>`
+    ).join('');
+  }
+  function setDayFilter(d) { dayFilter = d; renderFeed(); }
+  function setCatFilter(c) { catFilter = c; renderFeed(); }
+
+  function renderFeed() {
+    renderDayFilters();
+    renderCatFilters();
+    const filtered = plans.filter(p => (dayFilter==='All'||(dayFilter==='Other'?(p.day!=='Sat'&&p.day!=='Sun'):p.day===dayFilter)) && (catFilter==='All'||p.category===catFilter));
+    const list = document.getElementById('feed-list');
+    list.innerHTML = filtered.length
+      ? filtered.map(cardHtml).join('')
+      : `<div class="empty-state"><div class="glyph">&#128197;</div><h3>No plans yet</h3><p>Nothing matches these filters.<br>Be the first to post one this weekend.</p></div>`;
+  }
+
+  function requestJoin(id) {
+    const p = plans.find(p => p.id === id);
+    if (!p.pending.includes(currentUser) && !p.interested.includes(currentUser)) {
+      p.pending.push(currentUser);
+      // DEMO: auto-approve instantly and notify the user
+      approveRequest(id, currentUser);
+      return;
+    }
+    refreshAfterChange(id);
+  }
+
+  function cancelRequest(id) {
+    const p = plans.find(p => p.id === id);
+    p.pending = p.pending.filter(n => n !== currentUser);
+    showToast('Request withdrawn');
+    refreshAfterChange(id);
+  }
+
+  function leavePlan(id) {
+    const p = plans.find(p => p.id === id);
+    p.interested = p.interested.filter(n => n !== currentUser);
+    showToast("You're out of \u201c" + p.title + "\u201d");
+    refreshAfterChange(id);
+  }
+
+  function approveRequest(id, name) {
+    const p = plans.find(p => p.id === id);
+    p.pending = p.pending.filter(n => n !== name);
+    if (!p.interested.includes(name)) p.interested.push(name);
+    if (name === currentUser) {
+      addNotification('Join Request Accepted', p.host + ' accepted your request to join “' + p.title + '”.', p.id);
+      showToast('Your request was accepted');
+    } else {
+      showToast(name + ' approved for “' + p.title + '”');
+    }
+    refreshAfterChange(id);
+  }
+
+  function rejectRequest(id, name) {
+    const p = plans.find(p => p.id === id);
+    p.pending = p.pending.filter(n => n !== name);
+    if (name === currentUser) addNotification('Join Request Rejected', p.host + ' declined your request to join “' + p.title + '”.', p.id);
+    showToast(name + "'s request declined");
+    refreshAfterChange(id);
+  }
+
+  function refreshAfterChange(id) {
+    renderFeed();
+    renderHero();
+    updateRequestsBadge();
+    renderNotifications();
+    if (currentDetailId === id) renderDetail(id);
+    if (document.getElementById('page-myplans').classList.contains('active')) renderMyPlans();
+    if (document.getElementById('page-requests').classList.contains('active')) renderRequests();
+  }
+
+  function renderRequests() {
+    const hostedWithPending = plans.filter(p => p.host === currentUser && p.pending.length);
+    const list = document.getElementById('requests-list');
+    if (!hostedWithPending.length) {
+      list.innerHTML = `<div class="panel"><div class="empty-state"><div class="glyph">&#9989;</div><h3>No pending requests</h3><p>When someone asks to join a plan you're hosting, it'll show up here.</p></div></div>`;
+      return;
+    }
+    list.innerHTML = hostedWithPending.map(p => `
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-head"><h3>${esc(p.title)}</h3><span class="list-row-sub">${p.date ? formatPlanDate(p.date) : p.day} &middot; ${esc(p.time)} &middot; ${esc(p.location)}</span></div>
+        <div class="people-list">
+          ${p.pending.map(name => `
+            <div class="person-row" style="justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;"><div class="avatar">${initials(name)}</div>${contactHtml(name)}</div>
+              <div style="display:flex;gap:8px;">
+                <button class="join-btn joined" onclick="approveRequest(${p.id}, '${name}')">Approve</button>
+                <button class="join-btn" style="background:#FEE2E2;color:#B91C1C;" onclick="rejectRequest(${p.id}, '${name}')">Reject</button>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  function openDetail(id) { currentDetailId = id; renderDetail(id); document.getElementById('modal-detail').classList.add('show'); }
+  function closeDetailModal() { currentDetailId = null; document.getElementById('modal-detail').classList.remove('show'); }
+
+  function renderDetail(id) {
+    const p = plans.find(p => p.id === id);
+    const cat = CATEGORIES[p.category];
+    const isHost = p.host === currentUser;
+    const joined = p.interested.includes(currentUser);
+    const pendingMe = p.pending.includes(currentUser);
+
+    document.getElementById('detail-body').innerHTML = `
+      <div class="detail-badge-row">
+        <div class="badge ${cat.cls}" style="width:48px;height:48px;font-size:11.5px;">${cat.abbr}</div>
+        <div>
+          <div class="detail-title">${esc(p.title)}</div>
+          <div class="detail-host">Posted by ${contactHtml(p.host, true)}</div>
+        </div>
+      </div>
+      <span class="vis-tag">${p.visibility === 'team' ? 'Visible to my team' : 'Visible to whole company'}</span>
+      <div class="detail-meta">
+        <div class="detail-meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg> ${p.date ? formatPlanDate(p.date) : p.day}</div>
+        <div class="detail-meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> ${esc(p.time)}</div>
+        <div class="detail-meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg> ${esc(p.location)}</div>
+      </div>
+      <div class="detail-section">
+        <h4>About this plan</h4>
+        <div class="detail-desc">${esc(p.description) || 'No extra details added.'}</div>
+      </div>
+      ${isHost && p.pending.length ? `
+      <div class="detail-section">
+        <h4 style="color:#B45309;">${p.pending.length} pending request${p.pending.length>1?'s':''}</h4>
+        <div class="people-list">
+          ${p.pending.map(name => `
+            <div class="person-row" style="justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;"><div class="avatar">${initials(name)}</div>${contactHtml(name)}</div>
+              <div style="display:flex;gap:8px;">
+                <button class="join-btn joined" onclick="approveRequest(${p.id}, '${name}')">Approve</button>
+                <button class="join-btn" style="background:#FEE2E2;color:#B91C1C;" onclick="rejectRequest(${p.id}, '${name}')">Reject</button>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
+      <div class="detail-section">
+        <h4>${p.interested.length ? p.interested.length + ' interested' : 'No one has joined yet'}</h4>
+        <div class="people-list">
+          ${p.interested.map(n => `<div class="person-row"><div class="avatar">${initials(n)}</div>${contactHtml(n)}</div>`).join('') || '<div class="detail-desc">Be the first to say you\'re in.</div>'}
+        </div>
+      </div>
+    `;
+
+    let cta;
+    if (isHost) cta = `<button class="hostnote" disabled>You're hosting this plan</button>`;
+    else if (joined) cta = `<button class="joined" onclick="leavePlan(${p.id})">You're in &mdash; tap to leave</button>`;
+    else if (pendingMe) cta = `<button class="hostnote" onclick="cancelRequest(${p.id})">Requested &mdash; tap to withdraw</button>`;
+    else cta = `<button class="join" onclick="requestJoin(${p.id})">Request to join</button>`;
+    document.getElementById('detail-cta').innerHTML = cta;
+  }
+
+  function renderCatGrid() {
+    document.getElementById('cat-grid').innerHTML = Object.entries(CATEGORIES).map(([k,v]) =>
+      `<div class="cat-opt ${formCategory===k?'active':''}" onclick="setFormCategory('${k}')">
+        <div class="dot" style="background:${v.dot}"></div>${v.label}
+      </div>`
+    ).join('');
+  }
+  function setFormCategory(k) { formCategory = k; renderCatGrid(); validateForm(); }
+
+  function formatPlanDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+  }
+
+  function getDayFromDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { weekday:'short' });
+  }
+
+  function formatPlanTime(timeStr) {
+    if (!timeStr) return '';
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const d = new Date();
+    d.setHours(hours, minutes, 0, 0);
+    return d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+  }
+
+  function renderVisGrid() {
+    document.getElementById('vis-grid').innerHTML = `
+      <div class="vis-opt ${formVisibility==='team'?'active':''}" onclick="setFormVis('team')">My team</div>
+      <div class="vis-opt ${formVisibility==='company'?'active':''}" onclick="setFormVis('company')">Whole company</div>
+    `;
+    document.getElementById('vis-hint').textContent = formVisibility === 'team'
+      ? 'Only people on your team will see this plan.'
+      : 'Anyone in the company can see and join this plan.';
+  }
+  function setFormVis(v) { formVisibility = v; renderVisGrid(); }
+
+  function openCreateModal() { resetForm(); document.getElementById('modal-create').classList.add('show'); }
+  function closeCreateModal() { document.getElementById('modal-create').classList.remove('show'); }
+
+  function resetForm() {
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-date').value = '';
+    document.getElementById('f-time').value = '';
+    document.getElementById('f-location').value = '';
+    document.getElementById('f-desc').value = '';
+    formCategory = null; formDate = null; formVisibility = 'company';
+    const dateInput = document.getElementById('f-date');
+    dateInput.min = todayStr();
+    renderCatGrid(); renderVisGrid();
+  renderNotifications(); validateForm();
+  }
+
+  function validateForm() {
+    const dateValue = document.getElementById('f-date').value;
+    formDate = dateValue || null;
+    const ok = document.getElementById('f-title').value.trim() &&
+               document.getElementById('f-time').value.trim() &&
+               document.getElementById('f-location').value.trim() &&
+               formCategory && formDate && formDate >= todayStr();
+    document.getElementById('submit-btn').disabled = !ok;
+  }
+
+  function submitPlan() {
+    validateForm();
+    if (document.getElementById('submit-btn').disabled) return;
+    const p = {
+      id: Date.now(),
+      title: document.getElementById('f-title').value.trim(),
+      category: formCategory,
+      date: formDate,
+      day: getDayFromDate(formDate),
+      time: formatPlanTime(document.getElementById('f-time').value),
+      location: document.getElementById('f-location').value.trim(),
+      description: document.getElementById('f-desc').value.trim(),
+      host: currentUser,
+      visibility: formVisibility,
+      interested: [],
+      // Demo behavior: every newly posted plan gets one mock join request
+      // so the Requests tab can demonstrate the Approve / Reject flow.
+      pending: ['Arjun K.']
+    };
+    plans.unshift(p);
+    closeCreateModal();
+    showToast('Plan posted');
+    dayFilter = 'All'; catFilter = 'All';
+    showPage('feed');
+  }
+
+  function setMyTab(tab) {
+    myTab = tab;
+    document.getElementById('tab-hosted').classList.toggle('active', tab==='hosted');
+    document.getElementById('tab-joined').classList.toggle('active', tab==='joined');
+    renderMyPlans();
+  }
+
+  function renderMyPlans() {
+    const list = document.getElementById('myplans-list');
+    const filtered = myTab === 'hosted'
+      ? plans.filter(p => p.host === currentUser)
+      : plans.filter(p => p.interested.includes(currentUser));
+    list.innerHTML = filtered.length
+      ? filtered.map(cardHtml).join('')
+      : (myTab === 'hosted'
+        ? `<div class="empty-state"><div class="glyph">&#128221;</div><h3>Nothing hosted yet</h3><p>Post a plan and it'll show up here.</p></div>`
+        : `<div class="empty-state"><div class="glyph">&#128101;</div><h3>Not joined anything yet</h3><p>Click "I'm in" on a plan from the feed.</p></div>`);
+  }
+
+  ['login-email','login-password'].forEach(id =>
+    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); }));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCreateModal(); closeDetailModal(); } });
+
+  renderCatGrid(); renderVisGrid();
+  renderNotifications();
+</script>
+</body>
+</html>
